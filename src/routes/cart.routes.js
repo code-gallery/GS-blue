@@ -1,0 +1,24 @@
+const express = require('express');
+const router = express.Router();
+
+const cartController = require('../controllers/company-portal/cart.controller');
+
+const ensureToken = (req, res, next) => {
+    const bearerToken = req.headers['authorization'];
+    if(bearerToken !== undefined){
+        const tokenArray = bearerToken.split(" ");
+        const token = tokenArray[1];
+        req.token = token;
+        next();
+    }else{
+        res.send({
+            status : "TOKEN_NOT_AVAILABLE"
+        })
+    }
+}
+
+
+router.get('/summary',cartController.getCartDetails);
+router.post('/save',cartController.addToCart)
+router.post('/checkQtyAndShip',ensureToken,cartController.checkQtyAndShip)
+module.exports = router;
